@@ -1,7 +1,9 @@
 # NotifyMe
 A Android Library for simple notifications. Very easily set a delay or time when you want the notification to popup. Notification will popup through system reboots.
 
-##Example
+![Demo](https://thumbs.gfycat.com/DishonestPlushBlacklab-size_restricted.gif)
+
+## Example
 
 Create a NotifyMe Builder Object
 
