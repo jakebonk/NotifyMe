@@ -17,6 +17,7 @@ import java.util.Date;
 
 import static android.content.Context.ALARM_SERVICE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_COLLAPSE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_DISMISS;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_COLOR;
@@ -60,6 +61,7 @@ public class NotifyMe {
         values.put(NOTIFICATION_ACTIONS,convertArrayToString(builder.actions));
         values.put(NOTIFICATION_ACTIONS_TEXT,convertArrayToString(builder.actions_text));
         values.put(NOTIFICATION_ACTIONS_DISMISS,convertArrayToString(builder.actions_dismiss));
+        values.put(NOTIFICATION_ACTIONS_COLLAPSE,convertArrayToString(builder.actions_collapse));
         values.put(NOTIFICATION_CUSTOM_ID,String.valueOf(builder.key));
         values.put(NOTIFICATION_LED_COLOR,String.valueOf(builder.led_color));
         values.put(NOTIFICATION_COLOR,builder.color);
@@ -83,7 +85,6 @@ public class NotifyMe {
     }
     public static String[] convertStringToArray(String str){
         String[] arr = str.split(strSeparator);
-        Log.e("size",String.valueOf(arr.length));
         return arr;
     }
 
@@ -152,6 +153,7 @@ public class NotifyMe {
         protected String[] actions = new String[0];
         protected String[] actions_text = new String[0];
         protected String[] actions_dismiss = new String[0];
+        protected String[] actions_collapse = new String[0];
         protected int color = -1;
         protected int led_color = 0;
         protected int small_icon = -1;
@@ -190,14 +192,21 @@ public class NotifyMe {
         }
 
         public Builder addAction(Intent intent,String text){
-            addAction(intent,text,true);
-            return this;
+            return addAction(intent,text,true,true);
         }
 
         public Builder addAction(Intent intent,String text,boolean dismiss){
+            return addAction(intent,text,dismiss,true);
+        }
+
+        public Builder addAction(Intent intent,String text,boolean dismiss,boolean collapse){
             String[] temp = new String[actions.length+1];
             for (int i = 0; i < this.actions.length; i++) {
                 temp[i] = this.actions[i];
+            }
+            String[] temp_collapse = new String[actions_collapse.length+1];
+            for (int i = 0; i < this.actions_collapse.length; i++) {
+                temp_collapse[i] = this.actions_collapse[i];
             }
             String[] temp_text = new String[actions_text.length+1];
             for (int i = 0; i < this.actions_text.length; i++) {
@@ -208,11 +217,13 @@ public class NotifyMe {
                 temp_dismiss[i] = this.actions_dismiss[i];
             }
             temp_dismiss[actions_dismiss.length] = String.valueOf(dismiss);
+            temp_collapse[actions_collapse.length] = String.valueOf(collapse);
             temp_text[actions_text.length] = text;
             temp[actions.length] = intent.toUri(0);
             this.actions_text = temp_text;
             this.actions = temp;
             this.actions_dismiss = temp_dismiss;
+            this.actions_collapse = temp_collapse;
             return this;
         }
 

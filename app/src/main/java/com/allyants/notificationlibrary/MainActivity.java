@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 .color(255,0,0,255)
                 .led_color(255,255,255,255)
                 .time(now)
-                .addAction(intent,"Snooze")
+                .addAction(intent,"Snooze",false)
                 .key("test")
-                .addAction(intent,"Dismiss")
+                .addAction(new Intent(),"Dismiss",true,false)
                 .addAction(intent,"Done")
                 .large_icon(R.mipmap.ic_launcher_round)
                 .build();

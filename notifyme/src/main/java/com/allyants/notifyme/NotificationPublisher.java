@@ -15,17 +15,17 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import static android.provider.BaseColumns._ID;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_COLLAPSE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_DISMISS;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_COLOR;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_CONTENT_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LARGE_ICON;
-import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_SMALL_ICON;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LED_COLOR;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_SMALL_ICON;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_TITLE_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.TABLE_NAME;
 
@@ -40,7 +40,6 @@ public class NotificationPublisher extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         String notificationId = intent.getStringExtra(NOTIFICATION_ID);
-        Log.e("received",notificationId);
         com.allyants.notifyme.Notification.NotificationDBHelper mDbHelper = new com.allyants.notifyme.Notification.NotificationDBHelper(context);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -51,6 +50,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         String str_actions = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS));
         String str_actions_text = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_TEXT));
         String str_actions_dismiss = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_DISMISS));
+        String str_actions_collapse = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_COLLAPSE));
         int led_color = data.getInt(data.getColumnIndex(NOTIFICATION_LED_COLOR));
         int small_icon = data.getInt(data.getColumnIndex(NOTIFICATION_SMALL_ICON));
         int large_icon = data.getInt(data.getColumnIndex(NOTIFICATION_LARGE_ICON));
@@ -58,6 +58,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         String[] actions = NotifyMe.convertStringToArray(str_actions);
         String[] actions_text = NotifyMe.convertStringToArray(str_actions_text);
         String[] actions_dismiss = NotifyMe.convertStringToArray(str_actions_dismiss);
+        String[] actions_collapse = NotifyMe.convertStringToArray(str_actions_collapse);
         data.close();
         db.close();
 
@@ -82,8 +83,9 @@ public class NotificationPublisher extends BroadcastReceiver {
                 tent.putExtra("_id",notificationId);
                 tent.putExtra("index",i);
                 tent.putExtra("action",actions[i]);
+                tent.putExtra("collapse",Boolean.parseBoolean(actions_collapse[i]));
                 tent.putExtra("dismiss",Boolean.parseBoolean(actions_dismiss[i]));
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context,1,tent,PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId)*3+i,tent,PendingIntent.FLAG_UPDATE_CURRENT);
                 mBuilder.addAction(R.drawable.ic_check_circle,actions_text[i],pendingIntent);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -93,7 +95,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         mBuilder.setSound(uri);
         Intent deleteIntent = new Intent(context,DeletePendingIntent.class);
         deleteIntent.putExtra("_id",notificationId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,1,deleteIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId),deleteIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setDeleteIntent(pendingIntent);
         Notification notification = mBuilder.build();
 
@@ -104,7 +106,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel nc = new NotificationChannel(notificationId,title,NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel nc = new NotificationChannel(notificationId,notificationId,NotificationManager.IMPORTANCE_HIGH);
             nc.enableLights(true);
             nc.setLightColor(led_color);
             mNotificationManager.createNotificationChannel(nc);

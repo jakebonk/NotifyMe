@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.allyants.notifyme">
 
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+
     <application>
         <receiver
             android:name=".BootNotifyMe"

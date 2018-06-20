@@ -21,6 +21,7 @@ public class Notification {
         public static final String NOTIFICATION_CUSTOM_ID = "custom_id";
         public static final String NOTIFICATION_ACTIONS_TEXT = "actions_text";
         public static final String NOTIFICATION_ACTIONS_DISMISS = "actions_dismiss";
+        public static final String NOTIFICATION_ACTIONS_COLLAPSE = "actions_collapse";
         public static final String NOTIFICATION_COLOR = "color";
         public static final String NOTIFICATION_LED_COLOR = "led_color";
         public static final String NOTIFICATION_SMALL_ICON = "small_icon";
@@ -41,6 +42,7 @@ public class Notification {
                     NotificationEntry.NOTIFICATION_CUSTOM_ID + " TEXT," +
                     NotificationEntry.NOTIFICATION_SMALL_ICON + " TEXT," +
                     NotificationEntry.NOTIFICATION_LARGE_ICON + " TEXT," +
+                    NotificationEntry.NOTIFICATION_ACTIONS_COLLAPSE + " TEXT," +
                     NotificationEntry.NOTIFICATION_CONTENT_TEXT + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
