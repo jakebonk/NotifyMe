@@ -1,7 +1,27 @@
+[![](https://jitpack.io/v/jakebonk/NotifyMe.svg)](https://jitpack.io/#jakebonk/NotifyMe)
+
 # NotifyMe
 A Android Library for simple notifications. Very easily set a delay or time when you want the notification to popup. Notification will popup through system reboots.
 
 ![Demo](https://thumbs.gfycat.com/DishonestPlushBlacklab-size_restricted.gif)
+
+## Download library with Jitpack.io
+Add this to your build.gradle file for your app.
+```java
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```	
+
+Add this to your dependencies in build.gradle for your project.
+```java
+	dependencies {
+	        implementation 'com.github.jakebonk:NotifyMe:1.0.0'
+	}
+```
 
 ## Example
 
