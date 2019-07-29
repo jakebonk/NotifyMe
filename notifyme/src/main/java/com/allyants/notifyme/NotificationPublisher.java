@@ -23,8 +23,10 @@ import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_COLOR;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_CONTENT_TEXT;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_DSTART;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LARGE_ICON;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LED_COLOR;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_RRULE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_SMALL_ICON;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_TITLE_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.TABLE_NAME;
@@ -47,6 +49,8 @@ public class NotificationPublisher extends BroadcastReceiver {
         data.moveToFirst();
         String title = data.getString(data.getColumnIndex(NOTIFICATION_TITLE_TEXT));
         String content = data.getString(data.getColumnIndex(NOTIFICATION_CONTENT_TEXT));
+        String rrule = data.getString(data.getColumnIndex(NOTIFICATION_RRULE));
+        long dstart = data.getLong(data.getColumnIndex(NOTIFICATION_DSTART));
         String str_actions = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS));
         String str_actions_text = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_TEXT));
         String str_actions_dismiss = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_DISMISS));
@@ -81,6 +85,8 @@ public class NotificationPublisher extends BroadcastReceiver {
                 Intent tent = new Intent(context,ActionReceiver.class);
                 tent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 tent.putExtra("_id",notificationId);
+                tent.putExtra("rrule",rrule);
+                tent.putExtra("dstart",dstart);
                 tent.putExtra("index",i);
                 tent.putExtra("action",actions[i]);
                 tent.putExtra("collapse",Boolean.parseBoolean(actions_collapse[i]));
@@ -95,6 +101,8 @@ public class NotificationPublisher extends BroadcastReceiver {
         mBuilder.setSound(uri);
         Intent deleteIntent = new Intent(context,DeletePendingIntent.class);
         deleteIntent.putExtra("_id",notificationId);
+        deleteIntent.putExtra("rrule",rrule);
+        deleteIntent.putExtra("dstart",dstart);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId),deleteIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setDeleteIntent(pendingIntent);
         Notification notification = mBuilder.build();

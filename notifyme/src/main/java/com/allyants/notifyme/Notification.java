@@ -17,6 +17,8 @@ public class Notification {
         public static final String TABLE_NAME = "notification";
         public static final String NOTIFICATION_TITLE_TEXT = "title";
         public static final String NOTIFICATION_TIME = "time";
+        public static final String NOTIFICATION_DSTART = "dstart";
+        public static final String NOTIFICATION_RRULE = "rrule";
         public static final String NOTIFICATION_ACTIONS = "actions";
         public static final String NOTIFICATION_CUSTOM_ID = "custom_id";
         public static final String NOTIFICATION_ACTIONS_TEXT = "actions_text";
@@ -34,10 +36,12 @@ public class Notification {
                     NotificationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     NotificationEntry.NOTIFICATION_TITLE_TEXT + " TEXT," +
                     NotificationEntry.NOTIFICATION_TIME + " LONG," +
+                    NotificationEntry.NOTIFICATION_DSTART + " LONG," +
                     NotificationEntry.NOTIFICATION_ACTIONS + " TEXT," +
                     NotificationEntry.NOTIFICATION_ACTIONS_TEXT + " TEXT," +
                     NotificationEntry.NOTIFICATION_COLOR + " INTEGER," +
                     NotificationEntry.NOTIFICATION_ACTIONS_DISMISS + " TEXT," +
+                    NotificationEntry.NOTIFICATION_RRULE + " TEXT," +
                     NotificationEntry.NOTIFICATION_LED_COLOR + " INTEGER," +
                     NotificationEntry.NOTIFICATION_CUSTOM_ID + " TEXT," +
                     NotificationEntry.NOTIFICATION_SMALL_ICON + " TEXT," +
@@ -51,7 +55,7 @@ public class Notification {
 
     public static class NotificationDBHelper extends SQLiteOpenHelper {
         // If you change the database schema, you must increment the database version.
-        public static final int DATABASE_VERSION = 1;
+        public static final int DATABASE_VERSION = 2;
         public static final String DATABASE_NAME = "Notification.db";
 
         public NotificationDBHelper(Context context) {

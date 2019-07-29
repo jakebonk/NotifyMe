@@ -3,6 +3,7 @@ package com.allyants.notificationlibrary;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         etContent = findViewById(R.id.etContent);
 
         Button btnCancel = findViewById(R.id.btnCancel);
+
 
         dpd = DatePickerDialog.newInstance(
                 MainActivity.this,
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 .addAction(new Intent(),"Dismiss",true,false)
                 .addAction(intent,"Done")
                 .large_icon(R.mipmap.ic_launcher_round)
+                .rrule("FREQ=MINUTELY;INTERVAL=5;COUNT=2")
                 .build();
     }
 }

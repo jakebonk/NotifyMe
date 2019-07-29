@@ -12,8 +12,13 @@ import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.util.Log;
 
+import org.dmfs.rfc5545.DateTime;
+import org.dmfs.rfc5545.recur.RecurrenceRule;
+import org.dmfs.rfc5545.recur.RecurrenceRuleIterator;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static android.content.Context.ALARM_SERVICE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_ACTIONS;
@@ -23,7 +28,9 @@ import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_COLOR;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_CONTENT_TEXT;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_CUSTOM_ID;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_DSTART;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LARGE_ICON;
+import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_RRULE;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_SMALL_ICON;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_LED_COLOR;
 import static com.allyants.notifyme.Notification.NotificationEntry.NOTIFICATION_TIME;
@@ -55,9 +62,19 @@ public class NotifyMe {
             builder.content("");
         if(builder.key == null)
             builder.key = "";
+        if(builder.rrule == null)
+            builder.rrule = "";
         values.put(NOTIFICATION_TITLE_TEXT,String.valueOf(builder.title));
         values.put(NOTIFICATION_CONTENT_TEXT,String.valueOf(builder.content));
+        values.put(NOTIFICATION_RRULE,String.valueOf(builder.rrule));
         values.put(NOTIFICATION_TIME,cal.getTimeInMillis());
+        if(builder.dstart == null) {
+            values.put(NOTIFICATION_DSTART, cal.getTimeInMillis());
+        }else{
+            Calendar dstart_cal = Calendar.getInstance();
+            dstart_cal.setTime(builder.dstart);
+            values.put(NOTIFICATION_DSTART,dstart_cal.getTimeInMillis());
+        }
         values.put(NOTIFICATION_ACTIONS,convertArrayToString(builder.actions));
         values.put(NOTIFICATION_ACTIONS_TEXT,convertArrayToString(builder.actions_text));
         values.put(NOTIFICATION_ACTIONS_DISMISS,convertArrayToString(builder.actions_dismiss));
@@ -135,21 +152,23 @@ public class NotifyMe {
         return this.builder;
     }
 
-    private static void scheduleNotification(Context context, String notificationId,Long time) {
+    static void scheduleNotification(Context context, String notificationId, long time) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
         intent.putExtra(NOTIFICATION_ID,notificationId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId),intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.e(notificationId,String.valueOf(time));
         alarmManager.set(AlarmManager.RTC_WAKEUP,time,pendingIntent);
     }
 
     public static class Builder{
 
         protected Context context;
-        protected CharSequence title,content,key;
+        protected CharSequence title,content,key,rrule;
         protected Long id;
         protected int delay = 0;
         protected Date time = new Date();
+        protected Date dstart = new Date();
         protected String[] actions = new String[0];
         protected String[] actions_text = new String[0];
         protected String[] actions_dismiss = new String[0];
@@ -165,6 +184,26 @@ public class NotifyMe {
 
         public Builder delay(int delay){
             this.delay = delay;
+            return this;
+        }
+
+        public Builder rrule(String str){
+            try {
+                RecurrenceRule r = new RecurrenceRule(str);
+                this.rrule = str;
+            }catch (Exception e){
+                Log.e("error",e.getMessage());
+            }
+            return this;
+        }
+
+        public Builder dstart(Date dstart){
+            this.dstart = time;
+            return this;
+        }
+
+        public Builder dstart(Calendar dstart){
+            this.dstart = dstart.getTime();
             return this;
         }
 
