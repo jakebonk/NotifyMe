@@ -19,7 +19,7 @@ Add this to your build.gradle file for your app.
 Add this to your dependencies in build.gradle for your project.
 ```java
 	dependencies {
-	        implementation 'com.github.jakebonk:NotifyMe:1.0.0'
+	        implementation 'com.github.jakebonk:NotifyMe:1.0.1'
 	}
 ```
 
@@ -43,7 +43,8 @@ Then set the fields you want.
   notifyMe.led_color(Int red,Int green,Int blue,Int alpha);//Color of LED when notification pops up
   notifyMe.time(Calendar time);//The time to popup notification
   notifyMe.delay(Int delay);//Delay in ms
-  notifyMe.large_icon(Int resource);
+  notifyMe.large_icon(Int resource);//Icon resource by ID
+  notifyMe.rrule("FREQ=MINUTELY;INTERVAL=5;COUNT=2")//RRULE for frequency of notification
   notifyMe.addAction(Intent intent,String text); //The action will call the intent when pressed
   
 ```
