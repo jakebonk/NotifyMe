@@ -124,12 +124,13 @@ public class NotifyMe {
             Notification.NotificationDBHelper mDbHelper = new Notification.NotificationDBHelper(context);
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             Cursor cursor = db.rawQuery("SELECT * FROM " + Notification.NotificationEntry.TABLE_NAME + " WHERE custom_id = ? LIMIT 1", new String[]{key});
-            cursor.moveToFirst();
-            int notificationId = cursor.getInt(cursor.getColumnIndex(Notification.NotificationEntry._ID));
-            db.delete(TABLE_NAME, com.allyants.notifyme.Notification.NotificationEntry._ID + " = " + notificationId, null);
+            if (cursor.moveToFirst()) {
+                int notificationId = cursor.getInt(cursor.getColumnIndex(Notification.NotificationEntry._ID));
+                db.delete(TABLE_NAME, com.allyants.notifyme.Notification.NotificationEntry._ID + " = " + notificationId, null);
+                cursor.close();
+                mNotificationManager.cancel(notificationId);
+            }
             db.close();
-            cursor.close();
-            mNotificationManager.cancel(notificationId);
         }catch (Exception e){
             e.printStackTrace();
         }
