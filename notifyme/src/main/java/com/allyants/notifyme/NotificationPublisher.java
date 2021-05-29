@@ -46,24 +46,25 @@ public class NotificationPublisher extends BroadcastReceiver {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         Cursor data = db.rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+_ID+" = "+notificationId,null);
-        data.moveToFirst();
-        String title = data.getString(data.getColumnIndex(NOTIFICATION_TITLE_TEXT));
-        String content = data.getString(data.getColumnIndex(NOTIFICATION_CONTENT_TEXT));
-        String rrule = data.getString(data.getColumnIndex(NOTIFICATION_RRULE));
-        long dstart = data.getLong(data.getColumnIndex(NOTIFICATION_DSTART));
-        String str_actions = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS));
-        String str_actions_text = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_TEXT));
-        String str_actions_dismiss = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_DISMISS));
-        String str_actions_collapse = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_COLLAPSE));
-        int led_color = data.getInt(data.getColumnIndex(NOTIFICATION_LED_COLOR));
-        int small_icon = data.getInt(data.getColumnIndex(NOTIFICATION_SMALL_ICON));
-        int large_icon = data.getInt(data.getColumnIndex(NOTIFICATION_LARGE_ICON));
-        int color = data.getInt(data.getColumnIndex(NOTIFICATION_COLOR));
-        String[] actions = NotifyMe.convertStringToArray(str_actions);
-        String[] actions_text = NotifyMe.convertStringToArray(str_actions_text);
-        String[] actions_dismiss = NotifyMe.convertStringToArray(str_actions_dismiss);
-        String[] actions_collapse = NotifyMe.convertStringToArray(str_actions_collapse);
-        data.close();
+        if (data.moveToFirst()) {
+            String title = data.getString(data.getColumnIndex(NOTIFICATION_TITLE_TEXT));
+            String content = data.getString(data.getColumnIndex(NOTIFICATION_CONTENT_TEXT));
+            String rrule = data.getString(data.getColumnIndex(NOTIFICATION_RRULE));
+            long dstart = data.getLong(data.getColumnIndex(NOTIFICATION_DSTART));
+            String str_actions = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS));
+            String str_actions_text = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_TEXT));
+            String str_actions_dismiss = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_DISMISS));
+            String str_actions_collapse = data.getString(data.getColumnIndex(NOTIFICATION_ACTIONS_COLLAPSE));
+            int led_color = data.getInt(data.getColumnIndex(NOTIFICATION_LED_COLOR));
+            int small_icon = data.getInt(data.getColumnIndex(NOTIFICATION_SMALL_ICON));
+            int large_icon = data.getInt(data.getColumnIndex(NOTIFICATION_LARGE_ICON));
+            int color = data.getInt(data.getColumnIndex(NOTIFICATION_COLOR));
+            String[] actions = NotifyMe.convertStringToArray(str_actions);
+            String[] actions_text = NotifyMe.convertStringToArray(str_actions_text);
+            String[] actions_dismiss = NotifyMe.convertStringToArray(str_actions_dismiss);
+            String[] actions_collapse = NotifyMe.convertStringToArray(str_actions_collapse);
+            data.close();
+        }
         db.close();
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context,notificationId);
