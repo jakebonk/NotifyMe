@@ -129,6 +129,7 @@ public class NotifyMe {
                 db.delete(TABLE_NAME, com.allyants.notifyme.Notification.NotificationEntry._ID + " = " + notificationId, null);
                 cursor.close();
                 mNotificationManager.cancel(notificationId);
+                cancelNotification(context, notificationId);
             }
             db.close();
         }catch (Exception e){
@@ -160,6 +161,15 @@ public class NotifyMe {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId),intent,PendingIntent.FLAG_UPDATE_CURRENT);
         Log.e(notificationId,String.valueOf(time));
         alarmManager.set(AlarmManager.RTC_WAKEUP,time,pendingIntent);
+    }
+    
+    static void cancelNotification(Context context, String notificationId) {
+        AlarmManager alarmMAnager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationPublisher.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Integer.parseInt(notificationId), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent.cancel();
+        Log.e(notificationId,"cancelling");
+        alarmManager.cancel(pendingIntent);
     }
 
     public static class Builder{
