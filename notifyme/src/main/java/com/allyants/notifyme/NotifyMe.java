@@ -168,7 +168,7 @@ public class NotifyMe {
         Intent intent = new Intent(context, NotificationPublisher.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntent.cancel();
-        Log.e(notificationId,"cancelling");
+        Log.e(String.valueOf(notificationId),"cancelling");
         alarmManager.cancel(pendingIntent);
     }
 
