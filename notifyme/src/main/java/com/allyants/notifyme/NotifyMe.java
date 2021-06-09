@@ -163,10 +163,10 @@ public class NotifyMe {
         alarmManager.set(AlarmManager.RTC_WAKEUP,time,pendingIntent);
     }
     
-    static void cancelNotification(Context context, String notificationId) {
+    static void cancelNotification(Context context, int notificationId) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationPublisher.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, Integer.parseInt(notificationId), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         pendingIntent.cancel();
         Log.e(notificationId,"cancelling");
         alarmManager.cancel(pendingIntent);
