@@ -124,12 +124,14 @@ public class NotifyMe {
             Notification.NotificationDBHelper mDbHelper = new Notification.NotificationDBHelper(context);
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             Cursor cursor = db.rawQuery("SELECT * FROM " + Notification.NotificationEntry.TABLE_NAME + " WHERE custom_id = ? LIMIT 1", new String[]{key});
-            cursor.moveToFirst();
-            int notificationId = cursor.getInt(cursor.getColumnIndex(Notification.NotificationEntry._ID));
-            db.delete(TABLE_NAME, com.allyants.notifyme.Notification.NotificationEntry._ID + " = " + notificationId, null);
+            if (cursor.moveToFirst()) {
+                int notificationId = cursor.getInt(cursor.getColumnIndex(Notification.NotificationEntry._ID));
+                db.delete(TABLE_NAME, com.allyants.notifyme.Notification.NotificationEntry._ID + " = " + notificationId, null);
+                cursor.close();
+                mNotificationManager.cancel(notificationId);
+                cancelNotification(context, notificationId);
+            }
             db.close();
-            cursor.close();
-            mNotificationManager.cancel(notificationId);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -159,6 +161,16 @@ public class NotifyMe {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,Integer.parseInt(notificationId),intent,PendingIntent.FLAG_UPDATE_CURRENT);
         Log.e(notificationId,String.valueOf(time));
         alarmManager.set(AlarmManager.RTC_WAKEUP,time,pendingIntent);
+    }
+    
+    static void cancelNotification(Context context, int notificationId) {
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationPublisher.class);
+        intent.putExtra(NOTIFICATION_ID,String.valueOf(notificationId));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent.cancel();
+        Log.e(String.valueOf(notificationId),"cancelling");
+        alarmManager.cancel(pendingIntent);
     }
 
     public static class Builder{
